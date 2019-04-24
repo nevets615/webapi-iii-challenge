@@ -18,19 +18,20 @@ router.get("/", (req, res) => {
   });
 
  router.get("/:id", (req, res) => {
-    userId = req.params.id;
-    db.findById(userId)
+    postId = req.params.id;
+    db.findById(postId)
       .then(user => {
-        if (user) {
-          res.status(200).json(user);
+        if (posts) {
+          res.status(200).json(posts);
         } else {
-          res.status(404).json({ error: "The user with the specified ID does not exist" });
+          res.status(404).json({ error:  "The post with the specified ID does not exist."  });
         }
       })
       .catch(err => {
-        res.status(500).json({ error: "The user information could not be retrieved" });
+        res.status(500).json({ error: "The post information could not be retrieved." });
       });
   });
+ 
   router.post("/", (req, res) => {
     const newPost = req.body;
     console.log("request body: ", newPost);
@@ -55,11 +56,11 @@ router.get("/", (req, res) => {
   });
 
   router.delete("/:id", (req, res) => {
-    const userId = req.params.id;
-    db.posts
+    const postId = req.params.id;
+    db
     .remove(postId)
     .then(deleted => {
-        res.status(404)
+        res.status(200)
         message: "The post with the specified ID does not exist."
       })
       .catch(err => {
@@ -71,18 +72,18 @@ router.get("/", (req, res) => {
   });
   
   router.put("/:id", (req, res) => {
-    const userId = req.params.id;
+    const postId = req.params.id;
     const updateInfo = req.body
     if (updateInfo.name && updateInfo.bio) {
-      db.update(userId, updateInfo)
-        .then(user => {
-         res.status(200).json(user)
+      db.update(postId, updateInfo)
+        .then(post => {
+         res.status(200).json(post)
         })
         .catch(err => {
-          res.status(500).json({error: err, message: "there was an error updating the user"})
+          res.status(500).json({error: err, message: "The post information could not be modified."})
         })
       } else {
-        res.status(400).json({message: "please provide a name and bio"})
+        res.status(400).json({message: "Please provide title and contents for the post." })
       }
   
   })
