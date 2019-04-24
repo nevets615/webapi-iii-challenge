@@ -1,5 +1,5 @@
 const express = require("express");
-
+const db = require("./postDb.js");
 const Posts = require("./postDb.js");
 
 const router = express.Router();
@@ -7,7 +7,6 @@ const router = express.Router();
 router.get("/", (req, res) => {
   db.find()
     .then(posts => {
-      console.log(posts);
       res.status(201).json(posts);
     })
     .catch(err => {
@@ -36,9 +35,8 @@ router.get("/:id", (req, res) => {
     });
 });
 
-router.post("/", (req, res) => {
+router.post("/:id", (req, res) => {
   const newPost = req.body;
-  console.log("request body: ", newPost);
 
   if (newPost) {
     db.insert(newPost)
@@ -46,11 +44,9 @@ router.post("/", (req, res) => {
         res.status(201).json(posts);
       })
       .catch(err => {
-        res
-          .status(400)
-          .json({
-            errorMessage: "Please provide title and contents for the post."
-          });
+        res.status(400).json({
+          errorMessage: "Please provide title and contents for the post."
+        });
       });
   } else {
     res.status(500).json({
@@ -88,12 +84,10 @@ router.put("/:id", (req, res) => {
         res.status(200).json(post);
       })
       .catch(err => {
-        res
-          .status(500)
-          .json({
-            error: err,
-            message: "The post information could not be modified."
-          });
+        res.status(500).json({
+          error: err,
+          message: "The post information could not be modified."
+        });
       });
   } else {
     res
