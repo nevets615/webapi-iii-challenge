@@ -2,10 +2,10 @@ const express = require("express");
 const server = express();
 const Posts = require("./userDb.js");
 const db = require("./userDb.js");
-const router = express.Router();
+const userRouter = express.Router();
 
-router.get("/", (req, res) => {
-  db.find()
+userRouter.get("/", (req, res) => {
+  db.get()
     .then(user => {
       res.status(201).json(user);
     })
@@ -25,13 +25,14 @@ function capName(name) {
     }
   };
 }
-server.use(capName);
-router.get("/:id", (req, res) => {
+userRouter.use(capName);
+
+userRouter.get("/:id", (req, res) => {
   userId = req.params.id;
-  db.findById(userId)
-    .then(user => {
-      if (user) {
-        res.status(200).json(user);
+  db.getById(userId)
+    .then(post => {
+      if (post) {
+        res.status(200).json(post);
       } else {
         res
           .status(404)
@@ -45,7 +46,7 @@ router.get("/:id", (req, res) => {
     });
 });
 
-router.get("/:userId", (req, res) => {
+userRouter.get("/:userId", (req, res) => {
   users
     .getUserId(req.params.userId)
     .then(posts => {
@@ -55,13 +56,13 @@ router.get("/:userId", (req, res) => {
       res.status(500).json({ error: "there was an error" });
     });
 });
-router.post("/", (req, res) => {
+userRouter.post("/", (req, res) => {
   const newUser = req.body;
   console.log("request body: ", newUser);
 
-  if (newUser) {
+  if (newUser.text && newUser.post_id) {
     db.insert(newPost)
-      .then(posts => {
+      .then(user => {
         res.status(201).json(user);
       })
       .catch(err => {
@@ -76,7 +77,7 @@ router.post("/", (req, res) => {
   }
 });
 
-router.delete("/:id", (req, res) => {
+userRouter.delete("/:id", (req, res) => {
   const postId = req.params.id;
   db.remove(postId)
     .then(deleted => {
@@ -96,7 +97,7 @@ router.delete("/:id", (req, res) => {
     });
 });
 
-router.put("/:id", (req, res) => {
+userRouter.put("/:id", (req, res) => {
   const postId = req.params.id;
   const updateInfo = req.body;
   if (updateInfo.name && updateInfo.bio) {
@@ -117,4 +118,4 @@ router.put("/:id", (req, res) => {
   }
 });
 
-module.exports = router;
+module.exports = userRouter;
