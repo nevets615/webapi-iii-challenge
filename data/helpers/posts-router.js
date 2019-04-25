@@ -5,8 +5,7 @@ const posts = require("./postDb.js");
 const postRouter = express.Router();
 
 postRouter.get("/", (req, res) => {
-  db
-  .get()
+  db.get()
     .then(posts => {
       res.status(201).json(posts);
     })

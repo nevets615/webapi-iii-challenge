@@ -1,13 +1,13 @@
 const express = require("express");
 const server = express();
-const Posts = require("./userDb.js");
+const users = require("./userDb.js");
 const db = require("./userDb.js");
 const userRouter = express.Router();
 
 userRouter.get("/", (req, res) => {
   db.get()
-    .then(user => {
-      res.status(201).json(user);
+    .then(users => {
+      res.status(201).json(users);
     })
     .catch(err => {
       res
@@ -15,17 +15,17 @@ userRouter.get("/", (req, res) => {
         .json({ error: "The users information could not be retrieved." });
     });
 });
-function capName(name) {
-  return (req, res, next) => {
-    const userName = req.headers.name;
-    if (name.toUpperCase()) {
-      next();
-    } else {
-      res.status(403).send("not uppercase");
-    }
-  };
-}
-userRouter.use(capName);
+// function capName(name) {
+//   return (req, res, next) => {
+//     const userName = req.headers.name;
+//     if (name.toUpperCase()) {
+//       next();
+//     } else {
+//       res.status(403).send("not uppercase");
+//     }
+//   };
+// }
+// userRouter.use(capName);
 
 userRouter.get("/:id", (req, res) => {
   userId = req.params.id;
@@ -48,7 +48,7 @@ userRouter.get("/:id", (req, res) => {
 
 userRouter.get("/:userId", (req, res) => {
   users
-    .getUserId(req.params.userId)
+    .getUserPosts(req.params.userId)
     .then(posts => {
       res.status(200).json(posts);
     })
@@ -60,7 +60,7 @@ userRouter.post("/", (req, res) => {
   const newUser = req.body;
   console.log("request body: ", newUser);
 
-  if (newUser.text && newUser.post_id) {
+  if (newUser.text && newUser.user_id) {
     db.insert(newPost)
       .then(user => {
         res.status(201).json(user);
@@ -100,7 +100,7 @@ userRouter.delete("/:id", (req, res) => {
 userRouter.put("/:id", (req, res) => {
   const postId = req.params.id;
   const updateInfo = req.body;
-  if (updateInfo.name && updateInfo.bio) {
+  if (updateInfo.name ) {
     db.update(postId, updateInfo)
       .then(post => {
         res.status(200).json(post);
@@ -108,13 +108,13 @@ userRouter.put("/:id", (req, res) => {
       .catch(err => {
         res.status(500).json({
           error: err,
-          message: "The post information could not be modified."
+          message: "The user information could not be modified."
         });
       });
   } else {
     res
       .status(400)
-      .json({ message: "Please provide title and contents for the post." });
+      .json({ message: "Please provide a name for the user." });
   }
 });
 
