@@ -7,7 +7,6 @@ const router = express.Router();
 router.get("/", (req, res) => {
   db.find()
     .then(user => {
-      
       res.status(201).json(user);
     })
     .catch(err => {
@@ -46,6 +45,16 @@ router.get("/:id", (req, res) => {
     });
 });
 
+router.get("/:userId", (req, res) => {
+  users
+    .getUserId(req.params.userId)
+    .then(posts => {
+      res.status(200).json(posts);
+    })
+    .catch(err => {
+      res.status(500).json({ error: "there was an error" });
+    });
+});
 router.post("/", (req, res) => {
   const newUser = req.body;
   console.log("request body: ", newUser);
@@ -96,12 +105,10 @@ router.put("/:id", (req, res) => {
         res.status(200).json(post);
       })
       .catch(err => {
-        res
-          .status(500)
-          .json({
-            error: err,
-            message: "The post information could not be modified."
-          });
+        res.status(500).json({
+          error: err,
+          message: "The post information could not be modified."
+        });
       });
   } else {
     res
